@@ -68,4 +68,25 @@ class ProductController extends Controller
             'message' => 'product deleted'
         ],200);
     }
+
+    public function custom1(){
+        return Product::select('id','name')->orderBy('created_at','desc')->take(10)->get();
+    }
+
+    public function custom2(){
+        return Product::selectRaw('id as product_id, name as product_name')->take(10)->get();
+    }
+
+    public function custom3(){
+        $products = Product::orderBy('created_at','desc')->take(10)->get();
+        $mapped = $products->map(function ($product){
+           return [
+               '_id' => $product['id'],
+               'product_name' => $product['name'],
+               'product_price' => $product['price'] * 1.03
+           ];
+        });
+        return $mapped->all();
+    }
+
 }
